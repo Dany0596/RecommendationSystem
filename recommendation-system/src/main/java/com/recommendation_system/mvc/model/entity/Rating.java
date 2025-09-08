@@ -2,16 +2,16 @@ package com.recommendation_system.mvc.model.entity;
 
 import java.sql.Timestamp;
 
-import jakarta.persistence.Entity;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "ratings")
 public class Rating {
-    private Long userId;
-    private Long movieId;
+    private String userId;
+    private String movieId;
     private int rating; // e.g., 1 to 5 stars
     private Timestamp timestamp;
 
-    /*
+    /**
      * Default constructor.
      */
     public Rating() {
@@ -21,15 +21,15 @@ public class Rating {
         this.timestamp  = null;
     }
 
-    /*
+    /**
      * Parameterized constructor.
-
-        @param userId       ID of the user who rated the movie.
-        @param movieId      ID of the rated movie.
-        @param rating       Rating value (e.g., 1 to 5 stars).
-        @param timestamp    Time when the rating was made.
+     * 
+     * @param userId        ID of the user who rated the movie.
+     * @param movieId       ID of the rated movie.
+     * @param rating        Rating value (e.g., 1 to 5 stars).
+     * @param timestamp     Time when the rating was made.
      */
-    public Rating(Long userId, Long movieId, int rating, Timestamp timestamp) {
+    public Rating(String userId, String movieId, int rating, Timestamp timestamp) {
         this.userId     = userId;
         this.movieId    = movieId;
         this.rating     = rating;
@@ -38,19 +38,19 @@ public class Rating {
 
     /*  DEFAULT GETTERS AND SETTERS */
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }           
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public Long getMovieId() {
+    public String getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(Long movieId) {
+    public void setMovieId(String movieId) {
         this.movieId = movieId;
     }
 

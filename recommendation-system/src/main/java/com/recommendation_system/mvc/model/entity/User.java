@@ -1,9 +1,14 @@
 package com.recommendation_system.mvc.model.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "users")
 public class User {
-    private Long   userId;
+    @Id
+    private String   userId;
    
-    /*
+    /**
      * Default constructor.
      */
     public User() {
@@ -12,11 +17,11 @@ public class User {
     
     /*  DEFAULT GETTERS AND SETTERS */
 
-    public Long getUserId() {
+    public String getUserId() {
         return userId;
     }  
 
-    public void setUserId(Long userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 }

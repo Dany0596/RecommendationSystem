@@ -1,16 +1,16 @@
 package com.recommendation_system.mvc.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+@Document(collection = "movies")
 public class Movie {
     @Id
-    private Long movieId;
+    private String movieId;
     private String title;
     private String genre;
 
-    /*
+    /**
      * Default constructor
      */
     public Movie() {
@@ -19,13 +19,13 @@ public class Movie {
         this.genre          = null;
     }
     
-    /*
+    /**
      * Parameterized constructor.
 
         @param title         Movie title.
         @param genre         Movie genre.
      */
-    public Movie(String title, String genre, int year, String director, String description) {
+    public Movie(String title, String genre) {
         this.title = title;
         this.genre = genre;
     }
@@ -48,11 +48,11 @@ public class Movie {
         this.genre = genre;
     }
 
-    public Long getMovieId() {
+    public String getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(Long movieId) {
+    public void setMovieId(String movieId) {
         this.movieId = movieId;
     }
 }
