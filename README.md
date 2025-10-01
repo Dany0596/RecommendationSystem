@@ -1,4 +1,6 @@
-# 🎬 Recommendation System
+WORK IN PROGRESS
+
+# Recommendation System
 
 A simple movie recommendation system built with **Spring Boot** and **PostgreSQL**.
 
@@ -84,7 +86,3 @@ You can enhance your portfolio by adding:
 * API request examples (via Postman or cURL)
 * Database schema screenshots (from pgAdmin)
 * A short description of how the recommendation logic works
-
----
-
- If you like this project, feel free to fork it and experiment!
