@@ -1,9 +1,9 @@
 package com.recommendation_system.mvc.model.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
-@Document(collection = "users")
+@Entity
+@Table(name = "users")
 public class User {
     @Id
     private String   userId;
@@ -17,10 +17,20 @@ public class User {
     
     /*  DEFAULT GETTERS AND SETTERS */
 
+    /**
+     * Get user ID.
+     * 
+     * @return ID of the user.
+     */
     public String getUserId() {
         return userId;
     }  
 
+    /**
+     * Set user ID.
+     * 
+     * @param userId ID of the user.
+     */
     public void setUserId(String userId) {
         this.userId = userId;
     }

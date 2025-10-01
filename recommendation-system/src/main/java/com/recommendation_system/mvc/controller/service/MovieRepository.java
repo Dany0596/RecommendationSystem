@@ -1,12 +1,11 @@
 package com.recommendation_system.mvc.controller.service;
 
 import java.util.List;
-
-import org.springframework.data.mongodb.repository.MongoRepository;
-
+import org.springframework.data.jpa.repository.JpaRepository;
 import com.recommendation_system.mvc.model.entity.Movie;
 
-public interface MovieRepository extends MongoRepository<Movie, Long> {
+public interface MovieRepository extends JpaRepository<Movie, Long> {
+
     // Additional query methods can be defined here if needed
 
     /**
@@ -18,11 +17,11 @@ public interface MovieRepository extends MongoRepository<Movie, Long> {
     List<Movie> findByTitleContaining(String keyword);
 
     /**
-     * Find movies by genre.
+     * Find movies by genres.
      * 
-     * @param genre     Genre to filter movies.
-     * @return          List of movies belonging to the specified genre.
+     * @param genres     Genres to filter movies.
+     * @return          List of movies belonging to the specified genres.
      */
-    List<Movie> findByGenre(String genre);
+    List<Movie> findByGenres(String genres);
 
 }

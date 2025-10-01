@@ -1,14 +1,16 @@
 package com.recommendation_system.mvc.model.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
 
-@Document(collection = "movies")
+@Entity
+@Table(name = "movies")
 public class Movie {
     @Id
-    private String movieId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long movieId;
     private String title;
-    private String genre;
+    private String genres;
 
     /**
      * Default constructor
@@ -16,43 +18,73 @@ public class Movie {
     public Movie() {
         this.movieId        = null;
         this.title          = null;
-        this.genre          = null;
+        this.genres          = null;
     }
     
     /**
      * Parameterized constructor.
 
         @param title         Movie title.
-        @param genre         Movie genre.
+        @param genres         Movie genre.
      */
-    public Movie(String title, String genre) {
+    public Movie(String title, String genres) {
         this.title = title;
-        this.genre = genre;
+        this.genres = genres;
     }
 
     /*  DEFAULT GETTERS AND SETTERS */
 
+    /**
+     * Get title.
+     * 
+     * @return Movie title.
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * Set title.
+     * 
+     * @param title Movie title.
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getGenre() {
-        return genre;
+    /**
+     * Get genre.
+     * 
+     * @return Movie genres.
+     */
+    public String getGenres() {
+        return genres;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    /**
+     * Set genre.
+     * 
+     * @param genres Movie genres.
+     */
+    public void setGenres(String genres) {
+        this.genres = genres;
     }
 
-    public String getMovieId() {
+    /**
+     * Get movie ID.
+     * 
+     * @return ID of the movie.
+     */
+    public Long getMovieId() {
         return movieId;
     }
 
-    public void setMovieId(String movieId) {
+    /**
+     * Set movie ID.
+     * 
+     * @param movieId ID of the movie.
+     */
+    public void setMovieId(Long movieId) {
         this.movieId = movieId;
     }
 }
