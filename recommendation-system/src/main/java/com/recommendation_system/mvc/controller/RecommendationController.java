@@ -35,8 +35,21 @@ public class RecommendationController {
      * @return          List of recommended movie IDs.
      */
     @GetMapping("/cosine/{userId}")
-    public List<Long> getRecommendations(@PathVariable Long userId,
-                                         @RequestParam(defaultValue = "5") int top) {
+    public List<Long> getRecommendations(   @PathVariable Long userId,
+                                            @RequestParam(defaultValue = "5") int top) {
         return cosineSimilarityService.recommendMovies(userId, top);
+    }
+
+    /**
+     * Get hybrid recommendations for a user.
+     * 
+     * @param userId    ID of the user to get recommendations for.
+     * @param top       Number of top recommendations to return (default is 5).
+     * @return          List of recommended movie IDs.
+     */
+       @GetMapping("/hybrid/{userId}")
+    public List<Long> getHybridRecommendations( @PathVariable Long userId,
+                                                @RequestParam(defaultValue = "5") int top) {
+        return cosineSimilarityService.recommendMoviesHybrid(userId, top);
     }
 }
