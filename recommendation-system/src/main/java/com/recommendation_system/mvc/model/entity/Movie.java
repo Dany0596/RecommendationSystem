@@ -2,6 +2,12 @@ package com.recommendation_system.mvc.model.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity class representing a Movie.
+ * 
+ * @author Daniele Vencato
+ * @since 2024-06
+ */
 @Entity
 @Table(name = "movies")
 public class Movie {

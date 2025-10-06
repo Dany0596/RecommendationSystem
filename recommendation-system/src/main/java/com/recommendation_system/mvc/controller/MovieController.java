@@ -11,11 +11,16 @@ import com.recommendation_system.mvc.controller.service.MovieRepository;
 import com.recommendation_system.mvc.model.entity.Movie;
 import java.util.List;
 
+/**
+ * Controller for managing movies.
+ * 
+ * @author Daniele Vencato
+ * @since 2024-06
+ */
 @RestController
 @RequestMapping("/movies")
 public class MovieController {
-
-    private final MovieRepository movieRepository;
+    private final MovieRepository movieRepository;  // Repository for Movie entity.
 
     /**
      * Constructor with dependency injection.

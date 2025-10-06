@@ -2,6 +2,12 @@ package com.recommendation_system.mvc.model.entity;
 
 import jakarta.persistence.*;
 
+/**
+ * Entity class representing a Rating.
+ * 
+ * @author Daniele Vencato
+ * @since 2024-06
+ */
 @Entity
 @Table(name = "ratings")
 public class Rating {
