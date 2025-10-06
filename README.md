@@ -1,88 +1,186 @@
-WORK IN PROGRESS
+# Movie Recommendation System - Backend
 
-# Recommendation System
+This project implements a movie recommendation system backend using **Spring Boot**, **Hibernate**, and **PostgreSQL**.
+The main purpose of this repository is to demonstrate how the recommendation logic works at the backend level. At this stage, no graphical interface is provided. The focus is on correct backend functionality and on giving an overview of how the code and its features operate.
 
-A simple movie recommendation system built with **Spring Boot** and **PostgreSQL**.
+---
 
-## Technologies
+## Features
+
+* **User-based movie recommendations** using cosine similarity on ratings.
+* **Movie retrieval** from the database.
+* **Ratings management** for users and movies.
+* **REST API endpoints** for testing and exploration.
+
+---
+
+## How to Run
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/yourusername/recommendation-system.git
+   cd recommendation-system
+   ```
+
+2. Configure your PostgreSQL database in `application.properties`:
+
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/your_database
+   spring.datasource.username=your_username
+   spring.datasource.password=your_password
+   spring.jpa.hibernate.ddl-auto=update
+   ```
+
+3. Build and run the application:
+
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+
+   The application will start on `http://localhost:8080`.
+
+---
+
+## Testing the API
+
+Since no front-end interface is provided, you can test the features using a browser or tools such as **Postman** or **cURL**.
+
+### Endpoints and Example Responses
+
+1. **Get all movies**
+
+   ```
+   GET http://localhost:8080/movies
+   ```
+
+   **Example JSON response:**
+
+   ```json
+   [
+     {
+       "id": 1,
+       "title": "Inception",
+       "genres": ["Sci-Fi", "Thriller"]
+     },
+     {
+       "id": 2,
+       "title": "The Matrix",
+       "genres": ["Action", "Sci-Fi"]
+     }
+   ]
+   ```
+
+2. **Get all ratings**
+
+   ```
+   GET http://localhost:8080/ratings
+   ```
+
+   **Example JSON response:**
+
+   ```json
+   [
+     {
+       "id": 1,
+       "userId": 1,
+       "movieId": 2,
+       "rating": 5.0
+     },
+     {
+       "id": 2,
+       "userId": 1,
+       "movieId": 1,
+       "rating": 4.0
+     }
+   ]
+   ```
+
+3. **Get recommendations for a specific user**
+   Replace `{userId}` with the target user ID.
+
+   ```
+   GET http://localhost:8080/recommendations/{userId}
+   ```
+
+   **Example JSON response:**
+
+   ```json
+   [
+     {
+       "movieId": 3,
+       "title": "Interstellar",
+       "predictedScore": 4.6
+     },
+     {
+       "movieId": 5,
+       "title": "The Prestige",
+       "predictedScore": 4.3
+     }
+   ]
+   ```
+
+4. **Add a new rating**
+
+   ```
+   POST http://localhost:8080/ratings
+   Content-Type: application/json
+
+   {
+     "userId": 1,
+     "movieId": 10,
+     "rating": 4.5
+   }
+   ```
+
+   **Example JSON response:**
+
+   ```json
+   {
+     "id": 15,
+     "userId": 1,
+     "movieId": 10,
+     "rating": 4.5
+   }
+   ```
+
+5. **Get recommendations using cosine similarity**
+
+   ```
+   GET http://localhost:8080/recommendations/cosine?userId=1&topN=5
+   ```
+
+   **Example JSON response:**
+
+   ```json
+   [
+     {
+       "movieId": 7,
+       "title": "Memento",
+       "similarityScore": 0.89
+     },
+     {
+       "movieId": 9,
+       "title": "Tenet",
+       "similarityScore": 0.83
+     }
+   ]
+   ```
+
+---
+
+## Notes
+
+* The current focus is on backend correctness. The code is structured to highlight data access, service logic, and recommendation algorithms.
+* A graphical interface may be added in the future, but at this stage the backend endpoints represent the intended functionality.
+* This project is intended as a demonstration of how recommendation systems can be implemented using Java and Spring Boot.
+
+---
+
+## Technologies Used
 
 * Java 21
 * Spring Boot 3
+* Hibernate ORM
 * PostgreSQL
-* Spring Data JPA (Hibernate)
-
-## Setup Instructions
-
-1. Clone the project
-
-   ```bash
-   git clone https://github.com/your-username/RecommendationSystem.git
-   cd RecommendationSystem
-   ```
-
-2. Create the database in PostgreSQL:
-
-   ```sql
-   CREATE DATABASE movielens;
-   ```
-
-3. Configure the `src/main/resources/application.properties` file with your PostgreSQL credentials:
-
-   ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/movielens
-   spring.datasource.username=postgres
-   spring.datasource.password=your_password
-   spring.jpa.hibernate.ddl-auto=update
-   spring.jpa.show-sql=true
-   ```
-
-4. Run the application:
-
-   ```bash
-   mvn spring-boot:run
-   ```
-
-5. Test the API endpoints:
-
-   * `GET http://localhost:8080/movie` → retrieves all movies
-   * `POST http://localhost:8080/movie` → adds a new movie
-
-## 📂 Project Structure
-
-```
-RecommendationSystem/
-│── src/
-│   ├── main/
-│   │   ├── java/com/recommendation_system/...   # source code
-│   │   └── resources/
-│   │       ├── application.properties           # Spring Boot configuration
-│   │       ├── schema.sql (optional)            # auto-executed schema
-│   │       └── data.sql (optional)              # auto-executed seed data
-│   └── test/                                    # JUnit tests
-│
-│── scripts/
-│   ├── schema.sql                               # manual DB creation
-│   └── data.sql                                 # sample dataset
-│
-│── README.md                                    # project documentation
-│── pom.xml / build.gradle                       # dependencies
-│── .gitignore                                   # ignore rules
-```
-
-## Database Scripts
-
-* If you want Spring Boot to **automatically create and populate the database**:
-
-  * Place `schema.sql` and/or `data.sql` in `src/main/resources/`
-* If you prefer **manual setup**:
-
-  * Keep the SQL scripts in the `scripts/` folder
-  * Execute them manually in pgAdmin or via `psql`
-
-## Example
-
-You can enhance your portfolio by adding:
-
-* API request examples (via Postman or cURL)
-* Database schema screenshots (from pgAdmin)
-* A short description of how the recommendation logic works
+* Maven
