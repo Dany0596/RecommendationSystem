@@ -1,7 +1,5 @@
 package com.recommendation_system.mvc.model.entity;
 
-import java.sql.Timestamp;
-
 import jakarta.persistence.*;
 
 @Entity

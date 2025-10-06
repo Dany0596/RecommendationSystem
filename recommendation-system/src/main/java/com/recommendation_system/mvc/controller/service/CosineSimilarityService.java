@@ -1,6 +1,10 @@
 package com.recommendation_system.mvc.controller.service;
 
+import com.recommendation_system.mvc.model.entity.Movie;
 import com.recommendation_system.mvc.model.entity.Rating;
+
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,18 +18,23 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CosineSimilarityService {
-    private static final int TOP_USER_SIMILARITY = 5;   // Number of top similar users to consider.
+    private static final int TOP_USER_SIMILARITY    = 5;   // Number of top similar users to consider.
+    private static final double CF_WEIGHT           = 0.7; // Weight for collaborative filtering.
+    private Map<Long, double[]> movieFeatures       = new HashMap<Long, double[]>();    // Movie features for content-based filtering (movieId -> feature vector).
 
     // Repository for accessing ratings data.
-    private final RatingRepository ratingRepository;
+    private final RatingRepository ratingRepository;        // Repository for accessing ratings data.
+    private final MovieRepository movieRepo;                // Repository for accessing movie data.
 
     /**
      * Constructor with dependency injection.
      * 
      * @param ratingRepository   Repository for Rating entity.
+     * @param movieRepo           Repository for Movie entity.
      */
-    public CosineSimilarityService(RatingRepository ratingRepository) {
-        this.ratingRepository   = ratingRepository;
+    public CosineSimilarityService(RatingRepository ratingRepository, MovieRepository movieRepo) {
+        this.ratingRepository    = ratingRepository;
+        this.movieRepo           = movieRepo;
     }
 
     /**
@@ -133,5 +142,106 @@ public class CosineSimilarityService {
                                             .limit(topNFilms)
                                             .map(Map.Entry::getKey)
                                             .toList();
+    }
+
+    /**
+     * Initialize movie features from genres for content-based filtering.
+     * This method is called after the service is constructed.
+     */
+    @PostConstruct
+    public void initMovieFeatures() {
+        List<Movie> movies              = movieRepo.findAll();
+        Set<String> allGenres           = movies.stream()
+                                                    .flatMap(m -> Arrays.stream(m.getGenres().split("\\|")))
+                                                    .collect(Collectors.toSet());
+        List<String> genreList          = new ArrayList<String>(allGenres);
+
+        // Create binary feature vectors for each movie based on genres.
+        for(Movie mov : movies) {
+
+            // Initialize feature vector.
+            double[] vector             = new double[genreList.size()];
+            String[] genres             = mov.getGenres().split("\\|");
+
+            // Set genre presence in the feature vector.
+            for (String gen : genres) {
+                int idx                 = genreList.indexOf(gen);
+                if (idx >= 0)
+                    vector[idx]  = 1d;
+            }
+            movieFeatures.put(mov.getMovieId(), vector);
+        }
+    }
+
+    /**
+     * Calculate cosine similarity between two feature vectors.
+     *
+     * @param vec1  the first feature vector
+     * @param vec2  the second feature vector
+     * @return      the cosine similarity between the two vectors
+     */
+    private double vectorCosineSimilarity(double[] vec1, double[] vec2) {
+        double dot  = 0.0, normA = 0.0, normB = 0.0;
+        for (int i = 0; i < vec1.length; i++) {
+            dot     += vec1[i] * vec2[i];
+            normA   += vec1[i] * vec1[i];
+            normB   += vec2[i] * vec2[i];
+        }
+        return (normA == 0 || normB == 0) ? 0 : dot / (Math.sqrt(normA) * Math.sqrt(normB));
+    }
+
+    /**
+     * Hybrid recommendation combining collaborative and content-based filtering.
+     *
+     * @param userId    ID of the target user.
+     * @param topN      Number of top recommendations to return.
+     * @return          List of recommended movie IDs.
+     */
+    public List<Long> recommendMoviesHybrid(Long userId, int topN) {
+        if(userId == null || topN <= 0)
+            return Collections.emptyList();
+        
+        // Collaborative Filtering.
+        List<Long> cfRecommendations    = this.recommendMovies(userId, topN * 2);
+
+        // Content-Based Filtering.
+        Map<Long, Double> cbScores      = new HashMap<Long, Double>();
+        for (Long movieIdA : cfRecommendations) {
+            double[] featuresA          = movieFeatures.get(movieIdA);
+            if (featuresA == null)
+                continue;
+
+            // Calculate similarity with all other movies.
+            for (Map.Entry<Long, double[]> entry : movieFeatures.entrySet()) {
+                Long movieIdB           = entry.getKey();
+                if (movieIdA.equals(movieIdB))
+                    continue;
+
+                double sim              = this.vectorCosineSimilarity(featuresA, entry.getValue());
+                cbScores.merge(movieIdB, sim, Double::sum);
+            }
+        }
+
+        // Combine CF and CB scores.
+        Map<Long, Double> hybridScores = new HashMap<>();
+        for (Long movieId : movieFeatures.keySet()) {
+
+            // CF score is 1 if in CF recommendations, else 0.
+            double cfScore              = cfRecommendations.contains(movieId) ? 1.0 : 0.0;
+
+            // CB score from content-based filtering.
+            double cbScore              = cbScores.getOrDefault(movieId, 0.0);
+
+            // Weighted combination of CF and CB scores.
+            double finalScore           = CosineSimilarityService.CF_WEIGHT * cfScore + (1 - CosineSimilarityService.CF_WEIGHT) * cbScore;
+            hybridScores.put(movieId, finalScore);
+        }
+
+        // Return top N recommendations.
+        return hybridScores.entrySet().stream()
+                                        .sorted(Map.Entry.<Long, Double>comparingByValue().reversed())
+                                        .limit(topN)
+                                        .map(Map.Entry::getKey)
+                                        .toList();
     }
 }
