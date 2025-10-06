@@ -9,11 +9,12 @@ import jakarta.persistence.*;
 public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer ratingId;
-    private String userId;
-    private String movieId;
-    private int rating; // e.g., 1 to 5 stars
-    private Timestamp timestamp;
+    @Column(name = "id")
+    private Long ratingId;
+    private Long userId;
+    private Long movieId;
+    private Double rating;
+    private Long timestamp;
 
     /**
      * Default constructor.
@@ -21,7 +22,7 @@ public class Rating {
     public Rating() {
         this.userId     = null;
         this.movieId    = null;
-        this.rating     = 0;
+        this.rating     = 0d;
         this.timestamp  = null;
     }
 
@@ -33,7 +34,7 @@ public class Rating {
      * @param rating        Rating value (e.g., 1 to 5 stars).
      * @param timestamp     Time when the rating was made.
      */
-    public Rating(String userId, String movieId, int rating, Timestamp timestamp) {
+    public Rating(Long userId, Long movieId, Double rating, Long timestamp) {
         this.userId     = userId;
         this.movieId    = movieId;
         this.rating     = rating;
@@ -47,7 +48,7 @@ public class Rating {
      * 
      * @return ID of the user who rated the movie.
      */
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }           
 
@@ -56,7 +57,7 @@ public class Rating {
      * 
      * @param userId ID of the user who rated the movie.
      */
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -65,7 +66,7 @@ public class Rating {
      * 
      * @return ID of the rated movie.
      */
-    public String getMovieId() {
+    public Long getMovieId() {
         return movieId;
     }
 
@@ -74,7 +75,7 @@ public class Rating {
      * 
      * @param movieId ID of the rated movie.
      */
-    public void setMovieId(String movieId) {
+    public void setMovieId(Long movieId) {
         this.movieId = movieId;
     }
 
@@ -83,7 +84,7 @@ public class Rating {
      * 
      * @return Rating value (e.g., 1 to 5 stars).
      */
-    public int getRating() {
+    public Double getRating() {
         return rating;
     }
 
@@ -92,7 +93,7 @@ public class Rating {
      * 
      * @param rating Rating value (e.g., 1 to 5 stars).
      */
-    public void setRating(int rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 
@@ -101,7 +102,7 @@ public class Rating {
      * 
      * @return Time when the rating was made.
      */
-    public Timestamp getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
@@ -110,7 +111,25 @@ public class Rating {
      * 
      * @param timestamp Time when the rating was made.
      */
-    public void setTimestamp(Timestamp timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    /**
+     * Get rating ID.
+     * 
+     * @return ID of the rating.
+     */
+    public Long getRatingId() {
+        return ratingId;
+    }
+
+    /**
+     * Set rating ID.
+     * 
+     * @param ratingId ID of the rating.
+     */
+    public void setRatingId(Long ratingId) {
+        this.ratingId = ratingId;
     }
 }
